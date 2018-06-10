@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link id="cssStyle" rel="stylesheet" type="text/css" href="css_cms3/regular.css">
+<title>Conor Higgins CMS</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+	var jsonArray = new Array();
+	var isAbstract;
+
+	$(document).ready(function()
+	{
+		loadContent("content_cms5/home.json");
+	});
+	
+	$(document).ajaxSend(function()
+	{
+    	statusMessage("Please wait, page is loading...", 1);
+	});
+	
+	$(document).ajaxSuccess(function()
+	{
+		statusMessage("Content successfully loaded.", 0);
+	});
+	
+	$(document).ajaxError(function(e, xhr)
+	{
+		statusMessage("Loading failed. Reason given by server: " + xhr.status + ", " + xhr.statusText + ".", 2);
+	});
+
+
+	function changeStyle(css)
+	{
+		document.getElementById("cssStyle").setAttribute("href", css);
+	}
+	
+	function statusMessage(txt, level)
+	{
+		$("#messages").html(txt);
+		
+		switch(level)
+		{
+			case 0:
+				// Success message
+				$("#messages").css("color", "green");
+				break;
+			case 1:
+				// Status messages
+				$("#messages").css("color", "orange");
+				break;
+			case 2:
+				// Error message
+				$("#messages").css("color", "red");
+				break;
+			default:
+				// Default message, yellow/unknown message
+				$("#messages").css("color", "orange");
+		}
+	}
+	
+	function loadContent(url)
+	{
+		startTime = new Date().getTime();
+		
+		$.getJSON(url, function(x)
+  						{
+  							jsonArray[0] = x.title;
+  							jsonArray[1] = x.abstract;
+  							jsonArray[2] = x.long;
+  							
+  							document.title = jsonArray[0];
+  							$("#contentArea").html(jsonArray[1]);
+  							
+  							$("#toggleButton").html("Abstract");
+  							$("#toggleButton").css("background-color", "green");
+  							
+  							isAbstract = true;
+  						})
+  	}
+  	
+  	function toggle()
+  	{
+  		if (isAbstract == true)
+  		{
+  			$("#contentArea").html(jsonArray[2]);
+  			statusMessage("Content changed to long form.", 0);
+  			isAbstract = false;
+  			$("#toggleButton").html("Long");
+  			$("#toggleButton").css("background-color", "blue");
+  		}
+  		else
+  		{
+  			$("#contentArea").html(jsonArray[1]);
+  			statusMessage("Content changed to abstract form.", 0);
+  			isAbstract = true;
+  			$("#toggleButton").html("Abstract");
+  			$("#toggleButton").css("background-color", "green");
+  		}
+  	}
+
+</script>
+
+</head>
+
+<body>
+
+	<table id="outer">
+  		<tr>
+  			<td id="navBar">
+  				<table id="inner">
+  					<tr>
+  						<th>
+  							<img src="logo_ucc.png">
+  						</th>
+  					</tr>
+  					
+  					<tr>
+  						<th>
+  							<button class="navButton" type="button" onclick="loadContent('content_cms5/home.json')">Home</button>
+  						</th>
+  					</tr>
+  					
+  					<tr>
+  						<th>
+  							<button class="navButton" type="button" onclick="loadContent('content_cms5/personal.json')">Personal</button>
+  						</th>
+  					</tr>
+  					
+  					<tr>
+  						<th>
+  							<button class="navButton" type="button" onclick="loadContent('content_cms5/professional.json')">Professional</button>
+  						</th>
+  					</tr>
+  					
+  					<tr>
+  						<th>
+  							<button class="navButton" type="button" onclick="loadContent('content_cms5/scrolling.json')">Scrolling Test</button>
+  						</th>
+  					</tr>
+  				</table>
+  			</td>
+  			
+  			<td id="content">
+  				<div id="contentArea">
+  				</div>
+  				<hr>
+  				<div id="messages">
+  				</div>
+  			</td>
+  		</tr>
+	</table>
+	
+	<br>
+	<button type="button" onclick="changeStyle('css_cms3/regular.css'); statusMessage('CSS changed to regular.', 0)"><span>Regular CSS</span></button>
+	<button type="button" onclick="changeStyle('css_cms3/green.css'); statusMessage('CSS changed to green.', 0)">Green CSS</button>
+	<button type="button" onclick="changeStyle('css_cms3/purple.css'); statusMessage('CSS changed to purple.', 0)">Purple CSS</button>
+	<button type="button" onclick="changeStyle('css_cms3/blue.css'); statusMessage('CSS changed to blue.', 0)">Blue CSS</button>
+	
+	<button type="button" onclick="toggle()" id="toggleButton">Abstract</button>
+	
+</body>
+</html>
+
+
